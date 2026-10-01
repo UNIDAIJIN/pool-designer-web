@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pool Designer</title>
+<meta name="description" content="屋内プールの響きを物理シミュレーションで作るリバーブ。YouTube などのタブの音にプールの響きをかけて聴けます。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230c1c24'/><path d='M5 20q3.5-3 7 0t7 0 7 0' stroke='%236bdbc8' stroke-width='2.4' fill='none' stroke-linecap='round'/><path d='M5 25q3.5-3 7 0t7 0 7 0' stroke='%232f80e0' stroke-width='2.4' fill='none' stroke-linecap='round'/><circle cx='22' cy='10' r='3' fill='%23f4d18c'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <h1>POOL DESIGNER</h1>
+      <p>屋内プールの響きを設計する</p>
+    </div>
+    <div class="top-controls">
+      <button id="detailToggle" class="pill" type="button" aria-pressed="false">詳細設定</button>
+      <label class="preset"><span>PRESET</span>
+        <select id="preset"></select>
+      </label>
+    </div>
+  </header>
+
+  <section class="panel input-panel" aria-labelledby="inputTitle">
+    <div class="input-head">
+      <h2 id="inputTitle" class="caps">入力 / INPUT</h2>
+      <div class="status" id="status" role="status">音源を選んでください</div>
+    </div>
+    <div class="input-body">
+      <div class="yt">
+        <ol class="steps">
+          <li><span>1</span><p>隣のタブで YouTube を開いて再生</p></li>
+          <li><span>2</span><p>「タブの音を取り込む」でそのタブを選び、<b>タブの音声も共有</b>をオン</p></li>
+          <li><span>3</span><p>元のタブの音は止まり、プールの響きがかかった音だけが鳴ります</p></li>
+        </ol>
+        <form id="ytForm" class="yt-form">
+          <input id="ytUrl" type="url" inputmode="url" placeholder="YouTube の URL(空欄なら YouTube のトップ)" autocomplete="off">
+          <button type="submit" class="ghost">隣のタブで開く</button>
+        </form>
+      </div>
+      <div class="sources">
+        <button id="srcTab" class="source primary" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="13" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+          タブの音を取り込む
+        </button>
+        <button id="srcFile" class="source" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6" cy="18" r="3"/><circle cx="16" cy="16" r="3"/></svg>
+          音声ファイル
+        </button>
+        <button id="srcMic" class="source" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+          マイク
+        </button>
+        <button id="srcDemo" class="source" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg>
+          デモ音
+        </button>
+        <button id="srcStop" class="source" type="button" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+          停止
+        </button>
+        <input id="fileInput" type="file" accept="audio/*,video/*" hidden>
+      </div>
+      <div class="monitor">
+        <button id="bypass" class="pill" type="button" aria-pressed="false" title="響きをオフにして原音を聴きます(スペースキーでも切り替え)">原音と聴き比べ</button>
+        <div class="meter" aria-hidden="true"><div id="meterFill"></div></div>
+      </div>
+      <p class="note" id="browserNote" hidden>タブの音の取り込みは、パソコンの Chrome / Edge で使えます。ほかのブラウザでは音声ファイル・マイク・デモ音をお使いください。</p>
+    </div>
+  </section>
+
+  <section class="panel room-panel" aria-label="部屋">
+    <div class="room-head">
+      <span class="caps">ROOM</span>
+      <span id="roomSize" class="muted"></span>
+    </div>
+    <canvas id="scene" aria-label="プールの立体図。L・W・H と 音源・聴く位置 をドラッグして変更できます"></canvas>
+    <p class="hint">L・W・H と 音源・聴く位置 をドラッグ</p>
+
+    <div class="detail-only">
+      <div class="label-row"><span class="caps">面 / SURFACE</span></div>
+      <div id="surfaceTabs" class="tabs" role="tablist"></div>
+    </div>
+    <div class="label-row">
+      <span class="caps" id="materialTitle">素材 / MATERIAL ― すべての面</span>
+      <span class="custom-note" id="customNote" hidden>面ごとに設定中(詳細設定で確認)</span>
+    </div>
+    <div id="materials" class="materials"></div>
+    <div class="detail-only mix-row">
+      <label for="materialB" class="caps">混ぜる素材</label>
+      <select id="materialB"></select>
+      <label for="mixB" class="caps">割合</label>
+      <input id="mixB" type="range" min="0" max="1" step="0.01">
+      <output id="mixBValue"></output>
+    </div>
+  </section>
+
+  <section class="panel params-panel" id="params" aria-label="パラメータ"></section>
+
+  <section class="panel stats-panel" aria-label="計算結果">
+    <div class="chart-wrap">
+      <div class="chart-head">
+        <span class="caps">残響時間 RT60</span>
+        <span class="legend"><i class="sw sim"></i>シミュレーション <i class="sw ey"></i>Eyring 式</span>
+      </div>
+      <canvas id="rtChart" aria-label="帯域ごとの残響時間"></canvas>
+    </div>
+    <dl class="figures">
+      <div><dt>響きの長さ(中音域)</dt><dd id="figRt">–</dd></div>
+      <div><dt>臨界距離</dt><dd id="figCd">–</dd></div>
+      <div><dt>音源までの距離</dt><dd id="figDist">–</dd></div>
+      <div><dt>状態</dt><dd id="figState">–</dd></div>
+    </dl>
+  </section>
+
+  <footer class="foot">
+    <span>寸法・素材・位置の変更は、再計算後になめらかに音へ反映されます。ヘッドホン推奨。</span>
+    <span>Pool Designer web v0.1.0</span>
+  </footer>
+</div>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
