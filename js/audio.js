@@ -184,66 +184,25 @@ export class PoolAudio {
   }
 
   async useFile(file) {
-    await this.init();
-    const el = new Audio();
-    el.src = URL.createObjectURL(file);
-    el.loop = true;
-    el.crossOrigin = 'anonymous';
-    const node = this.ctx.createMediaElementSource(el);
-    this.connect(node, () => { el.pause(); URL.revokeObjectURL(el.src); });
-    await el.play();
-    return el;
+    const url = URL.createObjectURL(file);
+    return this.playUrl(url, () => URL.revokeObjectURL(url));
   }
 
-  // 響きがわかりやすい短い音のループ(手拍子 + 声っぽい音)
+  // デモ曲(MoritaSaki in the pool「BALLOON DOG」)
   async useDemo() {
-    await this.init();
-    const ctx = this.ctx;
-    const bus = ctx.createGain();
-    bus.gain.value = 0.8;
-    const noise = ctx.createBuffer(1, Math.floor(ctx.sampleRate * 0.25), ctx.sampleRate);
-    const nd = noise.getChannelData(0);
-    for (let i = 0; i < nd.length; ++i) nd[i] = (Math.random() * 2 - 1) * Math.exp(-i / (ctx.sampleRate * 0.018));
+    return this.playUrl(new URL('../audio/balloon-dog.m4a', import.meta.url).href);
+  }
 
-    const beat = 60 / 96;
-    let nextTime = ctx.currentTime + 0.1, step = 0, stopped = false;
-    const melody = [0, 3, 7, 10, 7, 3, 5, -2];
-    const clap = (t) => {
-      const s = ctx.createBufferSource();
-      s.buffer = noise;
-      const f = ctx.createBiquadFilter();
-      f.type = 'bandpass'; f.frequency.value = 1500; f.Q.value = 0.8;
-      const g = ctx.createGain(); g.gain.value = 1.4;
-      s.connect(f).connect(g).connect(bus);
-      s.start(t);
-    };
-    const note = (t, semi) => {
-      const o = ctx.createOscillator();
-      o.type = 'sawtooth';
-      o.frequency.value = 220 * Math.pow(2, semi / 12);
-      const f = ctx.createBiquadFilter();
-      f.type = 'lowpass'; f.frequency.value = 1800;
-      const g = ctx.createGain();
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(0.22, t + 0.01);
-      g.gain.exponentialRampToValueAtTime(0.001, t + beat * 0.45);
-      o.connect(f).connect(g).connect(bus);
-      o.start(t);
-      o.stop(t + beat * 0.5);
-    };
-    const tick = () => {
-      if (stopped) return;
-      while (nextTime < ctx.currentTime + 0.3) {
-        const bar = step % 16;
-        if (bar === 4 || bar === 12) clap(nextTime);
-        if (bar < 8 && step % 32 < 16) note(nextTime, melody[bar]);
-        nextTime += beat / 2;
-        ++step;
-      }
-    };
-    const timer = setInterval(tick, 50);
-    tick();
-    this.connect(bus, () => { stopped = true; clearInterval(timer); });
+  async playUrl(url, cleanup) {
+    await this.init();
+    const el = new Audio();
+    el.crossOrigin = 'anonymous';
+    el.src = url;
+    el.loop = true;
+    const node = this.ctx.createMediaElementSource(el);
+    this.connect(node, () => { el.pause(); el.removeAttribute('src'); el.load(); cleanup?.(); });
+    await el.play();
+    return el;
   }
 
   // 出力レベル(dBFS, ピーク)

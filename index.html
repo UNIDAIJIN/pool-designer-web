@@ -55,7 +55,7 @@
         </button>
         <button id="srcDemo" class="source" type="button">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5v14l11-7z"/></svg>
-          デモ音
+          デモ曲
         </button>
         <button id="srcStop" class="source" type="button" disabled>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
@@ -67,7 +67,7 @@
         <button id="bypass" class="pill" type="button" aria-pressed="false" title="響きをオフにして原音を聴きます(スペースキーでも切り替え)">原音と聴き比べ</button>
         <div class="meter" aria-hidden="true"><div id="meterFill"></div></div>
       </div>
-      <p class="note" id="browserNote" hidden>タブの音の取り込みは、パソコンの Chrome / Edge で使えます。ほかのブラウザでは音声ファイル・マイク・デモ音をお使いください。</p>
+      <p class="note" id="browserNote" hidden>タブの音の取り込みは、パソコンの Chrome / Edge で使えます。ほかのブラウザでは音声ファイル・マイク・デモ曲をお使いください。</p>
     </div>
   </section>
 
@@ -113,6 +113,18 @@
       <div><dt>音源までの距離</dt><dd id="figDist">–</dd></div>
       <div><dt>状態</dt><dd id="figState">–</dd></div>
     </dl>
+  </section>
+
+  <section class="panel download-panel" aria-labelledby="dlTitle">
+    <div class="dl-text">
+      <h2 id="dlTitle" class="caps">プラグイン版をダウンロード / PLUGIN</h2>
+      <p>DAW で使える AU / VST3 版です。macOS 11 以降(Intel / Apple Silicon)。Logic Pro・GarageBand・Ableton Live・Cubase など。</p>
+      <p class="muted">インストール方法は zip 内の README_JP.txt を見てください。Apple の正式な署名がないため、README の手順でダウンロード品の印を外す必要があります。無料配布のテスト版です。</p>
+    </div>
+    <a class="dl-button" href="https://github.com/UNIDAIJIN/pool-designer-web/releases/download/plugin-v0.1.0/PoolDesigner-0.1.0-mac.zip" download>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+      <span>ダウンロード<small>PoolDesigner-0.1.0-mac.zip · 15 MB</small></span>
+    </a>
   </section>
 
   <footer class="foot">

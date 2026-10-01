@@ -381,7 +381,7 @@ $('srcMic').addEventListener('click', async () => {
 });
 $('srcDemo').addEventListener('click', async () => {
   const r = await run('demo', () => audio.useDemo());
-  if (r !== null) setStatus('デモ音を再生中', 'live');
+  if (r !== null) setStatus('デモ曲を再生中: MoritaSaki in the pool「BALLOON DOG」', 'live');
 });
 $('srcFile').addEventListener('click', () => $('fileInput').click());
 $('fileInput').addEventListener('change', async (e) => {

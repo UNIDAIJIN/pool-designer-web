@@ -47,6 +47,7 @@ button:disabled { cursor: default; opacity: 0.4; }
     "input input"
     "room params"
     "stats stats"
+    "download download"
     "foot foot";
 }
 .top { grid-area: top; }
@@ -54,6 +55,7 @@ button:disabled { cursor: default; opacity: 0.4; }
 .room-panel { grid-area: room; }
 .params-panel { grid-area: params; }
 .stats-panel { grid-area: stats; }
+.download-panel { grid-area: download; }
 .foot { grid-area: foot; }
 
 .panel {
@@ -220,9 +222,22 @@ input[type="range"]:hover::-webkit-slider-thumb { background: #fff; }
 
 .foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 11px; padding: 0 8px; }
 
+/* プラグイン版のダウンロード */
+.download-panel { display: flex; align-items: center; justify-content: space-between; gap: 20px 32px; flex-wrap: wrap; }
+.dl-text { flex: 1 1 420px; min-width: 0; }
+.dl-text p { margin: 6px 0 0; font-size: 13px; }
+.dl-button {
+  display: inline-flex; align-items: center; gap: 12px; padding: 12px 20px; border-radius: 12px;
+  background: var(--chip-sel); border: 1px solid var(--aqua); color: var(--aqua); text-decoration: none; font-weight: 700;
+}
+.dl-button:hover { background: #24494a; }
+.dl-button svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.dl-button span { display: grid; line-height: 1.3; }
+.dl-button small { font-size: 11px; font-weight: 400; color: var(--muted); }
+
 /* 狭い画面 */
 @media (max-width: 960px) {
-  .app { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "input" "room" "params" "stats" "foot"; }
+  .app { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "input" "room" "params" "stats" "download" "foot"; }
   .params-panel { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px 24px; }
   .detail .params-panel { gap: 6px 24px; }
 }
