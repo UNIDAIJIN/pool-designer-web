@@ -16,6 +16,10 @@
       <p>屋内プールの響きを設計する</p>
     </div>
     <div class="top-controls">
+      <button id="bypass" class="fx-switch" type="button" role="switch" aria-checked="true" title="エフェクトのオン / オフ(スペースキーでも切り替え)。オフにすると原音だけになります">
+        <span class="fx-track"><span class="fx-knob"></span></span>
+        <span class="fx-label">エフェクト <b id="fxState">ON</b></span>
+      </button>
       <button id="detailToggle" class="pill" type="button" aria-pressed="false">詳細設定</button>
       <label class="preset"><span>PRESET</span>
         <select id="preset"></select>
@@ -64,7 +68,7 @@
         <input id="fileInput" type="file" accept="audio/*,video/*" hidden>
       </div>
       <div class="monitor">
-        <button id="bypass" class="pill" type="button" aria-pressed="false" title="響きをオフにして原音を聴きます(スペースキーでも切り替え)">原音と聴き比べ</button>
+        <span class="caps">出力</span>
         <div class="meter" aria-hidden="true"><div id="meterFill"></div></div>
       </div>
       <p class="note" id="browserNote" hidden>タブの音の取り込みは、パソコンの Chrome / Edge で使えます。ほかのブラウザでは音声ファイル・マイク・デモ曲をお使いください。</p>

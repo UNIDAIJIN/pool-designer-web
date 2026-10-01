@@ -13,7 +13,7 @@ const kStorageKey = 'pool-designer-web-v1';
 const state = defaultState();
 let presetIndex = 0;
 let detailMode = false;
-let bypass = false; // 原音と聴き比べ中
+let bypass = false; // エフェクトオフ(原音だけ)
 try {
   const saved = JSON.parse(localStorage.getItem(kStorageKey) || 'null');
   if (saved && saved.state) {
@@ -423,10 +423,11 @@ $('ytForm').addEventListener('submit', (e) => {
   setStatus('YouTube で再生を始めたら「タブの音を取り込む」を押してください');
 });
 
-// 原音と聴き比べ
+// エフェクトのオン / オフ
 function setBypass(on) {
   bypass = on;
-  $('bypass').setAttribute('aria-pressed', String(on));
+  $('bypass').setAttribute('aria-checked', String(!on));
+  $('fxState').textContent = on ? 'OFF' : 'ON';
   audio.setParams({ ...state, bypass });
 }
 $('bypass').addEventListener('click', () => setBypass(!bypass));
